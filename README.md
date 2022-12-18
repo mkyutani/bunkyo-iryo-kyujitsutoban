@@ -42,4 +42,35 @@ Excelのデータ取得機能でpdfからデータを抽出する。
 ~/bunkyo-iryo-kyujitsutoban/work$ mv point.csv point.toban-ikashika2301.csv
 ~/bunkyo-iryo-kyujitsutoban/work$ mv point_data.csv point_data.toban-ikashika2301.csv
 ```
-## 
+## `convert.py`コマンドラインオプション
+
+### --encoding
+
+`--encoding`はCSVファイルのエンコーディングを指定する。
+デフォルト値は`utf-8`。
+
+### --month
+
+`--month`は年月を指定する。指定方法は以下のいずれかである。
+
+* 月のみ: 1～2桁の数字の場合は、その年の月を表す。年末に近い場合に小さい月数を指定した場合は翌年になる。
+* 年月(YYMMまたはYYYYMM): 4桁または6桁の数字の場合は、指定したとおりの年(先頭2桁または4桁)と月(末尾2桁)となる。
+
+デフォルト値は現在の年月。
+
+### --dir
+
+`--dir`は作業ディレクトリを表す。作業ディレクトリには入力ファイルや出力ファイル、ジオコーディングのキャッシュファイルなどがおかれる。
+
+### --tenant, --servicepath, --category
+
+`--tenant`、`--servicepath`、`--category`はそれぞれStarSeekerのtenant (FIWAREのfiware-serviceヘッダ)、servicepath (FIWAREのfiware-servicepathヘッダ)、categoryを表す。
+デフォルト値はそれぞれ以下の通り。
+
+* tenant: `NULL`
+* servicepath: `NULL`
+* category: `文京区医療休日当番`
+
+## ライセンス
+
+[MIT License](https://github.com/mkyutani/bunkyo-iryo-kyujitsutoban/blob/main/LICENSE)
