@@ -249,8 +249,8 @@ def output(locations, dir):
     with open(point_path, 'w') as fdp:
         with open(point_data_path, 'w') as fdpd:
             color_palette = [
-                '#7f4500', '#008000', '#000080', '#b22222',
-                '#ffdab9', '#00ff00', '#8a2be2', '#00ffff'
+                '#7f4500', '#008000', '#191970', '#b22222',
+                '#800080', '#0000ff', '#2f4f4f', '#4b0082'
             ]
             color_index = 0
             for location_at_date in sorted(locations):
