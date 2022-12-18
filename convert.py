@@ -235,16 +235,24 @@ def create_locations(data, month_expr, geocode_cache):
 
     return locations
 
-def output(locations, dir):
-
-    tenant = 'bunkyo'
-    servicepath = '/kyujitsuiryo'
-    category = '当番医科歯科'
+def output(locations, dir, tenant, servicepath, category):
 
     now_string = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
 
+    tenant_path = os.path.join(dir, 'tenant.csv')
+    servicepath_path = os.path.join(dir, 'servicepath.csv')
+    category_path = os.path.join(dir, 'category.csv')
     point_path = os.path.join(dir, 'point.csv')
     point_data_path = os.path.join(dir, 'point_data.csv')
+
+    with open(tenant_path, 'w') as fdt:
+        print(tenant, file=fdt)
+
+    with open(servicepath_path, 'w') as fdsp:
+        print(f'{servicepath},{tenant}', file=fdsp)
+
+    with open(category_path, 'w') as fdc:
+        print(f'{category},{tenant},{servicepath},#3f3f3f,1,〇', file=fdc)
 
     with open(point_path, 'w') as fdp:
         with open(point_data_path, 'w') as fdpd:
@@ -285,9 +293,12 @@ def main():
 
     parser = argparse.ArgumentParser(description='make kyujitu iryo list of bunkyo city', formatter_class=SortingHelpFormatter)
     parser.add_argument('meddent', nargs=1, metavar='CSV', help='medical and dental schedule csv')
+    parser.add_argument('--encoding', nargs=1, metavar='ENCODING', default=['utf-8'], help='encoding of source csv file')
     parser.add_argument('--month', nargs=1, default=[None], help='year and month (ex. 202301, 2301 or 1)')
     parser.add_argument('--dir', nargs=1, metavar='DIR', default=['.'], help='working directory')
-    parser.add_argument('--encoding', nargs=1, metavar='ENCODING', default=['utf-8'], help='encoding of source csv file')
+    parser.add_argument('--tenant', nargs=1, metavar='TENANT', default=['NULL'], help='StarSeeker tenant (fiware-service)')
+    parser.add_argument('--servicepath', nargs=1, metavar='PATH', default=['NULL'], help='StarSeeker service path (fiware-servicepath)')
+    parser.add_argument('--category', nargs=1, metavar='CATEGORY', default=['文京区医療休日当番'], help='StarSeeker category')
 
     if len(sys.argv) < 2:
         print(parser.format_usage(), file=sys.stderr)
@@ -302,7 +313,7 @@ def main():
     if type(locations) is int:
         return locations
     else:
-        output(locations, args.dir[0])
+        output(locations, args.dir[0], args.tenant[0], args.servicepath[0], args.category[0])
 
     geocode_cache.save()
 
