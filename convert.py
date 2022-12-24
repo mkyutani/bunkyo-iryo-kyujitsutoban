@@ -69,12 +69,12 @@ class GeocodeCache:
         if os.path.exists(self.cache_file_path):
             with open(self.cache_file_path, 'r', encoding=self.encoding) as fdcache:
                 self.cache = json.load(fdcache)
-            print(f'loaded geocode cache (N={len(self.cache)}) from {self.cache_file_path}')
+            print(f'loaded geocode cache (N={len(self.cache)}) from {self.cache_file_path}', file=sys.stderr)
 
     def save(self):
         with open(self.cache_file_path, 'w', encoding=self.encoding) as fdcache:
             json.dump(self.cache, fdcache)
-        print(f'saved geocode cache (N={len(self.cache)}) in {self.cache_file_path}')
+        print(f'saved geocode cache (N={len(self.cache)}) in {self.cache_file_path}', file=sys.stderr)
 
     def get(self, location):
         return self.cache.get(location)
