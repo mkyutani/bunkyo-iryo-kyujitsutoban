@@ -64,12 +64,11 @@ Excelのデータ取得機能でpdfからデータを抽出する。
 
 ### --tenant, --servicepath, --category
 
-`--tenant`、`--servicepath`、`--category`はそれぞれStarSeekerのtenant (FIWAREのfiware-serviceヘッダ)、servicepath (FIWAREのfiware-servicepathヘッダ)、categoryを表す。
-デフォルト値はそれぞれ以下の通り。
+`--tenant`、`--servicepath`、`--category`はそれぞれStarSeekerのtenant (FIWAREのfiware-serviceヘッダ)、servicepath (FIWAREのfiware-servicepathヘッダ)、categoryを表す。デフォルト値はそれぞれ以下の通り。
 
-* tenant: `NULL`
-* servicepath: `NULL`
-* category: `文京区医療休日当番`
+* tenant: `NULL` ※英数字、アンダースコア('_')のみ
+* servicepath: `NULL` ※英数字、アンダースコア('_')のみ、絶対パス指定('/'から始める)
+* category: `文京区医療休日当番` ※メニューに出る文字列(日本語可)
 
 ## ライセンス
 
