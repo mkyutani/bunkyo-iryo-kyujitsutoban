@@ -3,6 +3,7 @@
 import csv
 import datetime
 import errno
+import io
 import json
 import os
 import re
@@ -235,25 +236,34 @@ def create_locations(data, month_expr, geocode_cache):
 
     return locations
 
-def output(locations, dir, tenant, servicepath, category):
+def output(locations, dir, tenant, servicepath, category, output_all):
 
     now_string = datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
 
-    tenant_path = os.path.join(dir, 'tenant.csv')
-    servicepath_path = os.path.join(dir, 'servicepath.csv')
+    if tenant is None:
+        tenant = 'NULL'
+
+    if servicepath is None:
+        servicepath = 'NULL'
+    elif servicepath[0] != '/':
+        servicepath = '/' + servicepath
+        print(f'added \'/\' to service path string ({servicepath}), because it must specify the abosolute path', file=sys.stderr)
+
+    if output_all:
+        tenant_path = os.path.join(dir, 'tenant.csv')
+        with open(tenant_path, 'w') as fdt:
+            print(tenant, file=fdt)
+
+        servicepath_path = os.path.join(dir, 'servicepath.csv')
+        with open(servicepath_path, 'w') as fdsp:
+            print(f'{servicepath},{tenant}', file=fdsp)
+
     category_path = os.path.join(dir, 'category.csv')
-    point_path = os.path.join(dir, 'point.csv')
-    point_data_path = os.path.join(dir, 'point_data.csv')
-
-    with open(tenant_path, 'w') as fdt:
-        print(tenant, file=fdt)
-
-    with open(servicepath_path, 'w') as fdsp:
-        print(f'{servicepath},{tenant}', file=fdsp)
-
     with open(category_path, 'w') as fdc:
         print(f'{category},{tenant},{servicepath},#3f3f3f,1,〇', file=fdc)
 
+    point_path = os.path.join(dir, 'point.csv')
+    point_data_path = os.path.join(dir, 'point_data.csv')
     with open(point_path, 'w') as fdp:
         with open(point_data_path, 'w') as fdpd:
             color_palette = [
@@ -283,6 +293,10 @@ def output(locations, dir, tenant, servicepath, category):
 
 def main():
 
+    sys.stdin = io.TextIOWrapper(sys.stdin.buffer, encoding="utf-8")
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding="utf-8")
+
     import argparse
     from argparse import HelpFormatter
     from operator import attrgetter
@@ -296,9 +310,10 @@ def main():
     parser.add_argument('--encoding', nargs=1, metavar='ENCODING', default=['utf-8'], help='encoding of source csv file')
     parser.add_argument('--month', nargs=1, default=[None], help='year and month (ex. 202301, 2301 or 1)')
     parser.add_argument('--dir', nargs=1, metavar='DIR', default=['.'], help='working directory')
-    parser.add_argument('--tenant', nargs=1, metavar='TENANT', default=['NULL'], help='StarSeeker tenant (fiware-service)')
-    parser.add_argument('--servicepath', nargs=1, metavar='PATH', default=['NULL'], help='StarSeeker service path (fiware-servicepath)')
+    parser.add_argument('--tenant', nargs=1, metavar='TENANT', default=[None], help='StarSeeker tenant (fiware-service)')
+    parser.add_argument('--servicepath', nargs=1, metavar='PATH', default=[None], help='StarSeeker service path (fiware-servicepath)')
     parser.add_argument('--category', nargs=1, metavar='CATEGORY', default=['文京区医療休日当番'], help='StarSeeker category')
+    parser.add_argument('--output-all', action='store_true', help='output all files including tenant.csv and servicepath.csv')
 
     if len(sys.argv) < 2:
         print(parser.format_usage(), file=sys.stderr)
@@ -313,7 +328,7 @@ def main():
     if type(locations) is int:
         return locations
     else:
-        output(locations, args.dir[0], args.tenant[0], args.servicepath[0], args.category[0])
+        output(locations, args.dir[0], args.tenant[0], args.servicepath[0], args.category[0], args.output_all)
 
     geocode_cache.save()
 
